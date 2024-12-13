@@ -1,0 +1,5 @@
+.*/
+bin/*
+backup*
+third_party/*
+compile_commands.json

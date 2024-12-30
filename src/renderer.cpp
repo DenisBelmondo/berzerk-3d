@@ -41,7 +41,7 @@ void Renderer::initialize() {
     sounds[std::size_t(SoundID::PISTOL_FIRE)] = LoadSound("static/audio/pistol_fire.wav");
     sounds[std::size_t(SoundID::ROBOT_EXPLODE)] = LoadSound("static/audio/robot_explode.wav");
 
-    playSound = [](SoundID sound) {
+	bm::berzerk::playSound = [](SoundID sound) {
         PlaySound(sounds[std::size_t(sound)]);
     };
 

@@ -7,8 +7,7 @@
 
 namespace bm {
 
-template <typename T>
-struct SparseSet {
+template <typename T> struct SparseSet {
     using SparseIndex = std::size_t;
     using DenseIndex = std::size_t;
 
@@ -28,9 +27,9 @@ struct SparseSet {
 
         // try to reuse last freed index
         if (denseIndex < dense.size()) {
-           auto denseElement = &dense[denseIndex];
-           denseElement->value = item;
-           return denseElement->sparseIndex;
+            auto denseElement = &dense[denseIndex];
+            denseElement->value = item;
+            return denseElement->sparseIndex;
         }
 
         // allocate new index

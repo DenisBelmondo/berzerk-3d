@@ -6,17 +6,16 @@
 
 namespace bm {
 
-template <typename...Ts>
-struct Event {
+template <typename... Ts> struct Event {
     using Delegate = std::function<void(Ts...)>;
-// private:
+    // private:
     std::vector<Delegate> _eventQueue;
-// public:
+    // public:
     void addEventListener(Delegate &&delegate) {
         _eventQueue.push_back(delegate);
     }
 
-    void invoke(Ts...args) {
+    void invoke(Ts... args) {
         for (auto fn : _eventQueue) {
             std::invoke(fn, args...);
         }

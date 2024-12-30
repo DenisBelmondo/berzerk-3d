@@ -1,6 +1,6 @@
-#include <raylib.hpp>
 #include "berzerk.hpp"
 #include "renderer.hpp"
+#include <raylib.hpp>
 
 const double TICK_RATE = 1.0 / 30.0;
 

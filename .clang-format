@@ -1,0 +1,17 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+---
+Language: Cpp
+AccessModifierOffset: -4
+Cpp11BracedListStyle: false
+DerivePointerAlignment: false
+IndentAccessModifiers: false
+IndentCaseBlocks: false
+IndentExternBlock: false
+IndentGotoLabels: false
+IndentWrappedFunctionNames: false
+PointerAlignment: Right
+SortIncludes: CaseInsensitive
+SpaceBeforeCpp11BracedList: true
+---

@@ -1,10 +1,10 @@
+#include "berzerk.hpp"
+#include "math.hpp"
+#include "sounds.hpp"
 #include <cmath>
 #include <cstring>
 #include <iostream>
 #include <raylib.h>
-#include "berzerk.hpp"
-#include "math.hpp"
-#include "sounds.hpp"
 
 using namespace bm;
 using namespace bm::berzerk;
@@ -12,6 +12,7 @@ using namespace bm::berzerk;
 bool bm::berzerk::shouldStop = false;
 void (*bm::berzerk::playSound)(SoundID) = nullptr;
 std::vector<std::vector<int>> bm::berzerk::layouts = {
+    // clang-format off
     {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 0, 0,-2, 0, 0, 0, 0, 0, 1,
@@ -49,6 +50,7 @@ std::vector<std::vector<int>> bm::berzerk::layouts = {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     },
 };
+// clang-format on
 
 void World::killRobot(Linked<Robot> &robot) {
     robot.data.state = Robot::State::DYING;
@@ -109,7 +111,8 @@ void World::tickPlayer(double delta) {
 
     raylib::Vector2 strafeMove {};
 
-    strafeMove += raylib::Vector2(-playerTransform.direction.y, playerTransform.direction.x);
+    strafeMove += raylib::Vector2(-playerTransform.direction.y,
+                                  playerTransform.direction.x);
     strafeMove *= strafeAxis;
 
     raylib::Vector2 moveVector {};
@@ -144,7 +147,10 @@ void World::tickWeapon(double delta) {
 
 void World::tickRobot(Linked<Robot> &linked, double delta) {
     if (linked.data.state == Robot::State::CHASING) {
-        move(linked.data.transform, (playerTransform.position - linked.data.transform.position).Normalize() * delta);
+        move(linked.data.transform,
+             (playerTransform.position - linked.data.transform.position)
+                     .Normalize() *
+                 delta);
         linked.data.frame += 3.0F * delta;
         linked.data.frame = std::fmod(linked.data.frame, 2);
     } else if (linked.data.state == Robot::State::DYING) {
@@ -162,8 +168,11 @@ void World::tickRobotBullet(Linked<math::Transform> &linked, double delta) {
     bool shouldDelete = false;
 
     linked.data.position += linked.data.direction * ROBOT_BULLET_SPEED * delta;
-    shouldDelete |= linked.data.position.DistanceSqr({}) >= ROBOT_BULLET_DELETE_DISTANCE_SQUARED;
-    shouldDelete |= (*tileMap.flat)[int(linked.data.position.y) * tileMap.pitch + int(linked.data.position.x)] > 0;
+    shouldDelete |= linked.data.position.DistanceSqr({}) >=
+                    ROBOT_BULLET_DELETE_DISTANCE_SQUARED;
+    shouldDelete |=
+        (*tileMap.flat)[int(linked.data.position.y) * tileMap.pitch +
+                        int(linked.data.position.x)] > 0;
 
     // TODO: broadphase
 
@@ -181,8 +190,11 @@ void World::tickPlayerBullet(Linked<math::Transform> &linked, double delta) {
     bool shouldDelete = false;
 
     linked.data.position += linked.data.direction * PLAYER_BULLET_SPEED * delta;
-    shouldDelete |= linked.data.position.DistanceSqr({}) >= PLAYER_BULLET_DELETE_DISTANCE_SQUARED;
-    shouldDelete |= (*tileMap.flat)[int(linked.data.position.y) * tileMap.pitch + int(linked.data.position.x)] > 0;
+    shouldDelete |= linked.data.position.DistanceSqr({}) >=
+                    PLAYER_BULLET_DELETE_DISTANCE_SQUARED;
+    shouldDelete |=
+        (*tileMap.flat)[int(linked.data.position.y) * tileMap.pitch +
+                        int(linked.data.position.x)] > 0;
 
     // TODO: broadphase
 
@@ -193,7 +205,8 @@ void World::tickPlayerBullet(Linked<math::Transform> &linked, double delta) {
             continue;
         }
 
-        if (linked.data.position.DistanceSqr(it->value.data.transform.position) < 0.5F) {
+        if (linked.data.position.DistanceSqr(
+                it->value.data.transform.position) < 0.5F) {
             shouldDelete |= true;
             killRobot(it->value);
             playerScore += 100;
@@ -231,7 +244,8 @@ void World::removePlayerBullet(std::size_t handle) {
 void World::move(math::Transform &transform, const raylib::Vector2 &motion) {
     transform.position += motion;
 
-    if ((*tileMap.flat)[int(transform.position.y) * tileMap.pitch + int(transform.position.x)] > 0) {
+    if ((*tileMap.flat)[int(transform.position.y) * tileMap.pitch +
+                        int(transform.position.x)] > 0) {
         transform.position.x = std::round(transform.position.x);
         transform.position.y = std::round(transform.position.y);
     }
@@ -244,7 +258,8 @@ void World::nextLayout() {
         int value = (*tileMap.flat)[i];
         int x = i % tileMap.pitch;
         int y = i / tileMap.pitch;
-        raylib::Vector2 center = raylib::Vector2::One() * (tileMap.pitch / 2.0F);
+        raylib::Vector2 center =
+            raylib::Vector2::One() * (tileMap.pitch / 2.0F);
 
         center += raylib::Vector2::One() * 0.5F;
 
@@ -252,9 +267,11 @@ void World::nextLayout() {
             playerTransform.position.x = x;
             playerTransform.position.y = y;
             playerTransform.position += raylib::Vector2::One() * 0.5F;
-            playerTransform.direction = (center - playerTransform.position).Normalize();
+            playerTransform.direction =
+                (center - playerTransform.position).Normalize();
         } else if (value == -2) {
-            spawnRobot(math::Transform { raylib::Vector2(x, y) + raylib::Vector2::One() * 0.5F });
+            spawnRobot(math::Transform { raylib::Vector2(x, y) +
+                                         raylib::Vector2::One() * 0.5F });
         }
     }
 }

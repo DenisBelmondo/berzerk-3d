@@ -1,10 +1,10 @@
 #ifndef BERZERK_H
 #define BERZERK_H
 
-#include <vector>
 #include "math.hpp"
 #include "sounds.hpp"
 #include "sparse_set.hpp"
+#include <vector>
 
 namespace bm::berzerk {
 
@@ -18,9 +18,8 @@ struct TileMap {
     std::size_t pitch = 0;
 
     TileMap() = default;
-    TileMap(const std::vector<int> *flat) :
-        flat(flat),
-        pitch(std::sqrt(flat->size())) {}
+    TileMap(const std::vector<int> *flat)
+        : flat(flat), pitch(std::sqrt(flat->size())) {}
 };
 
 struct Robot {
@@ -35,8 +34,7 @@ struct Robot {
 };
 
 struct World {
-    template <typename T>
-    struct Linked {
+    template <typename T> struct Linked {
         T data;
         bool flaggedForDeletion = false;
 
@@ -54,12 +52,14 @@ struct World {
     WeaponState weaponState;
     float playerBob;
     float weaponTimerSeconds;
+
 private:
     void tickPlayer(double delta);
     void tickPlayerBullet(Linked<math::Transform> &linked, double delta);
     void tickWeapon(double delta);
     void tickRobot(Linked<Robot> &linked, double delta);
     void tickRobotBullet(Linked<math::Transform> &linked, double delta);
+
 public:
     void tick(double delta);
     void spawnPlayerBullet(const math::Transform &where);

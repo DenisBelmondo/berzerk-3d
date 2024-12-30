@@ -1,9 +1,9 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include "berzerk.hpp"
 #include <Camera3D.hpp>
 #include <raylib.hpp>
-#include "berzerk.hpp"
 
 namespace bm::berzerk {
 

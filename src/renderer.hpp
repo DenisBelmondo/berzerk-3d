@@ -2,22 +2,19 @@
 #define RENDERER_H
 
 #include <Camera3D.hpp>
-#include <MeshUnmanaged.hpp>
 #include <raylib.hpp>
-#include <ShaderUnmanaged.hpp>
-#include <TextureUnmanaged.hpp>
 #include "berzerk.hpp"
 
 namespace bm::berzerk {
 
 struct Renderer {
     static Model playerBulletModel;
-    static raylib::MeshUnmanaged wallMesh;
-    static raylib::ShaderUnmanaged wallShader;
+    static Mesh wallMesh;
+    static Shader wallShader;
     static Material wallMaterial;
-    static raylib::TextureUnmanaged textureRobot;
-    static raylib::TextureUnmanaged textureVPistol0;
-    static raylib::TextureUnmanaged textureVPistol1;
+    static Texture textureRobot;
+    static Texture textureVPistol0;
+    static Texture textureVPistol1;
     static Sound sounds[std::size_t(SoundID::COUNT)];
 
     const World *world;

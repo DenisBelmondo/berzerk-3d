@@ -1,13 +1,12 @@
 #include <Color.hpp>
-#include <iostream>
 #include <Matrix.hpp>
 #include <MeshUnmanaged.hpp>
-#include <raylib.h>
-#include <raylib.hpp>
-#include <raymath.hpp>
 #include <Rectangle.hpp>
 #include <Vector2.hpp>
 #include <Vector3.hpp>
+// #include <iostream>
+#include <raylib.hpp>
+#include <raymath.hpp>
 #include "berzerk.hpp"
 #include "renderer.hpp"
 #include "sounds.hpp"
@@ -16,12 +15,12 @@ using namespace bm;
 using namespace bm::berzerk;
 
 Model Renderer::playerBulletModel;
-raylib::MeshUnmanaged Renderer::wallMesh;
-raylib::ShaderUnmanaged Renderer::wallShader;
+Mesh Renderer::wallMesh;
+Shader Renderer::wallShader;
 Material Renderer::wallMaterial;
-raylib::TextureUnmanaged Renderer::textureRobot;
-raylib::TextureUnmanaged Renderer::textureVPistol0;
-raylib::TextureUnmanaged Renderer::textureVPistol1;
+Texture Renderer::textureRobot;
+Texture Renderer::textureVPistol0;
+Texture Renderer::textureVPistol1;
 Sound Renderer::sounds[std::size_t(SoundID::COUNT)];
 
 void Renderer::initialize() {
@@ -29,16 +28,16 @@ void Renderer::initialize() {
     InitWindow(640, 480, "Berzerk");
     InitAudioDevice();
     playerBulletModel = LoadModelFromMesh(raylib::MeshUnmanaged::Cube(0.25F, -0.25F, 1.0F));
-    wallMesh = raylib::MeshUnmanaged::Cube(1, 1, 1);
-    wallMesh.Upload();
-    wallShader = LoadShader("static/shaders/wall.vert", "static/shaders/wall.frag");
-    wallShader.locs[SHADER_LOC_MATRIX_MVP] = wallShader.GetLocation("mvp");
-    wallShader.locs[SHADER_LOC_VECTOR_VIEW] = wallShader.GetLocation("viewPos");
+    wallMesh = GenMeshCube(1, 1, 1);
+    UploadMesh(&wallMesh, false);
+	wallShader = LoadShader("static/shaders/wall.vert", "static/shaders/wall.frag");
+    wallShader.locs[SHADER_LOC_MATRIX_MVP] = GetShaderLocation(wallShader, "mvp");
+	wallShader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(wallShader, "viewPos");
     wallMaterial = LoadMaterialDefault();
     wallMaterial.shader = wallShader;
-    textureRobot.Load("static/textures/robot.png");
-    textureVPistol0.Load("static/textures/v_pistol_0.png");
-    textureVPistol1.Load("static/textures/v_pistol_1.png");
+    textureRobot = LoadTexture("static/textures/robot.png");
+    textureVPistol0 = LoadTexture("static/textures/v_pistol_0.png");
+    textureVPistol1 = LoadTexture("static/textures/v_pistol_1.png");
     sounds[std::size_t(SoundID::PISTOL_FIRE)] = LoadSound("static/audio/pistol_fire.wav");
     sounds[std::size_t(SoundID::ROBOT_EXPLODE)] = LoadSound("static/audio/robot_explode.wav");
 
@@ -52,10 +51,10 @@ void Renderer::initialize() {
 
 void Renderer::deinitialize() {
     UnloadModel(playerBulletModel);
-    textureRobot.Unload();
-    textureVPistol0.Unload();
-    textureVPistol1.Unload();
-    wallMesh.Unload();
+    UnloadTexture(textureRobot);
+    UnloadTexture(textureVPistol0);
+    UnloadTexture(textureVPistol1);
+    UnloadMesh(wallMesh);
     CloseAudioDevice();
     CloseWindow();
 }
@@ -72,7 +71,7 @@ void Renderer::render() {
     cameraPos[0] = camera.position.x;
     cameraPos[1] = camera.position.y;
     cameraPos[2] = camera.position.z;
-    wallShader.SetValue(wallShader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
+	SetShaderValue(wallShader, wallShader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
 
     bm::berzerk::shouldStop |= WindowShouldClose();
     BeginDrawing();
@@ -87,7 +86,7 @@ void Renderer::render() {
             x += 0.5F;
             y += 0.5F;
             raylib::Matrix transform = raylib::Matrix::Translate(x, 0, y);
-            wallMesh.Draw(wallMaterial, transform);
+			DrawMesh(wallMesh, wallMaterial, transform);
         }
     }
 
@@ -121,7 +120,7 @@ void Renderer::render() {
     camera.EndMode();
     vSpriteCamera.BeginMode();
 
-    raylib::TextureUnmanaged *vSpriteTexture = &textureVPistol0;
+    Texture *vSpriteTexture = &textureVPistol0;
 
     if (world->weaponState == WeaponState::FIRING) {
         vSpriteTexture = &textureVPistol1;
